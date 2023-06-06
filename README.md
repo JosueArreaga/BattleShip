@@ -7,6 +7,4 @@ This project seeks to:
     teammates to collaborate successfully.
     
 Team members: 
-  Giancarlo Vazquez
-  Christopher Cordero
-  Josue Arreaga
+  Giancarlo Vazquez, Christopher Cordero, Josue Arreaga
