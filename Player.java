@@ -83,7 +83,7 @@ public class Player {
 	 * checks the opponents playerBoard at the given coordinates. If the space is occupied by a
 	 * ship, an 'x' is stored in the opponentBoard belonging to this specific Player object.
 	 * In this way, we can keep track of a player's actions without editing or
-	 * revealing the opponent's actual board in the process.
+	 * revealing the opponent's actual board in the process. If the player hits a target, they're given a point.
 	 */
 	public void Attack(Player opponent, Scanner input) {
 		opponentBoard.print();
