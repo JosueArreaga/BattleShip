@@ -3,6 +3,8 @@ import java.util.Scanner;
 
 public class main {
 
+	//Note: We should probably move this into the Player class and have it equal the ship totals.
+	//Note: I went ahead and did it, but I'm leaving this here in case I broke something.
 	public static int POINTS_FOR_VICTORY = 9; 
 	
 	public static void main(String[] args) {
@@ -17,11 +19,17 @@ public class main {
 	        RunGame(player1, player2, input);
 	}
 	
+	//This is a basic function containing the turn actions for each player.
+	//When called by another function, swapping the player objects as 1st 
+	//and 2nd parameters behaves like swapping turns would. 
 	public static void TakeTurn(Player player, Player opponent, Scanner input) {
 		player.Attack(opponent, input);
 		player.opponentBoard.print();
 	}
 	
+	//This function facilitates the game. A do-while loop is used to give each player
+	//a turn. At the end of each turn, the function checks to see if the player's point
+	//total has hit the necessary amount needed to win the game. If not, the game continues.
 	public static void RunGame(Player player, Player opponent, Scanner input) {
 		int turnCounter = 1;
 		int playerIndicator = 1;
@@ -31,7 +39,7 @@ public class main {
         System.out.print("  Player: " + playerIndicator);
         System.out.print("  Points:" + player.points);
         TakeTurn(player, opponent, input);
-        if (player.points >= POINTS_FOR_VICTORY) {
+        if (player.points >= Player.POINTS_FOR_VICTORY) {
 			System.out.println("Player" + " 1 " + "Wins!");
 			System.exit(0);
         }
@@ -46,7 +54,7 @@ public class main {
         	turnCounter++;
         	playerIndicator--;
         }
-        if (opponent.points >= POINTS_FOR_VICTORY) {
+        if (opponent.points >= Player.POINTS_FOR_VICTORY) {
 			System.out.println("Player" + " 2 " + "Wins!");
 			System.exit(0);
         }
