@@ -1,5 +1,3 @@
-package softwareEngineeringProject;
-
 public class Board {
     char [][] board;
 
@@ -57,4 +55,19 @@ public class Board {
         System.out.println();
         System.out.println();
     }
+
+    public String getBoardRows(){
+        StringBuilder sb = new StringBuilder();
+
+        for (char[] chars : board) {
+            for (int j = 0; j < board[0].length; j++) {
+                sb.append(chars[j]).append("  ");
+            }
+            sb.append("/");
+        }
+
+        return sb.toString();
+    }
+
+
 }
