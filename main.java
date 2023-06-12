@@ -7,15 +7,123 @@ public class main {
     public static int POINTS_FOR_VICTORY = 9;
 
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
         Scanner input = new Scanner(System.in);
-        Player player1 = new Player();
-        System.out.println("Player 1, let's position your ships!");
-        player1.SetBoard(input);
-        Player player2 = new Player();
-        System.out.println("Player 2, let's position your ships!");
-        player2.SetBoard(input);
-        RunGame(player1, player2, input);
+        int gameSelected = menuText(input);
+
+
+        if(gameSelected == 100){
+            Player player1 = new Player();
+            player1.SetBoardRandomly();
+            Player player2 = new Player();
+            player2.SetBoardRandomly();
+            RunGame(player1, player2, input);
+        }
+
+        if(gameSelected == 101){
+            Player player1 = new Player();
+            player1.SetBoardRandomly();
+            Player player2 = new Player();
+            player2.SetBoardRandomly();
+            RunGame(player1, player2, input);
+        }
+
+        if(gameSelected == 110){
+            Player player1 = new Player();
+            System.out.println("Player 1, let's position your ships!");
+            player1.SetBoard(input);
+            Player player2 = new Player();
+            player2.SetBoardRandomly();
+            RunGame(player1, player2, input);
+        }
+
+        if(gameSelected == 111){
+            Player player1 = new Player();
+            System.out.println("Player 1, let's position your ships!");
+            player1.SetBoard(input);
+
+            Player player2 = new Player();
+            player2.SetBoardRandomly();
+            RunGame(player1, player2, input);
+        }
+
+        if(gameSelected == 200){
+            Player player1 = new Player();
+            player1.SetBoardRandomly();
+            Player player2 = new Player();
+            player2.SetBoardRandomly();
+            RunGame(player1, player2, input);
+        }
+
+        if(gameSelected == 210){
+            Player player1 = new Player();
+            System.out.println("Player 1, let's position your ships!");
+            player1.SetBoard(input);
+            Player player2 = new Player();
+            System.out.println("Player 2, let's position your ships!");
+            player2.SetBoard(input);
+            RunGame(player1, player2, input);
+        }
+
+    }
+
+
+    /*
+        This function asks the user which game mode and difficulty he would like to play and returns a number
+        corresponding to its difficulty.
+
+        Game Mode:
+            1 = Single Player
+            2 = Multi-Player
+
+        Game Modes:
+            0 = QuickStart
+            1 = Strategic Start
+
+         Difficulty Levels (Solo Only):
+            0 = Easy
+            1 = Hard
+
+        Return Value Examples:
+            100 = Single-Player, QuickStart, Easy
+            101 = Single-Player, QuickStart, Hard
+            111 = Single-Player, Strategic, Hard
+            110 = Single-Player, Strategic, Easy
+            200 = Multi-Player, QuickStart
+            210 = Multi-Player, Strategic
+
+     */
+    private static int menuText(Scanner choice) {
+        System.out.println("Welcome Captain! Choose your game mode: Solo(1) or Multiplayer(2)");
+        int gameMode = choice.nextInt();
+        int result = 0;
+
+        while (gameMode != 1 && gameMode != 2) {
+            System.out.println("Invalid Value Choose your game mode: Solo(1) or Multiplayer(2)");
+            gameMode = choice.nextInt();
+        }
+        result += gameMode * 100;
+
+
+        System.out.println("Captain do you want to QuickStart (0) or a StrategicStart (1)");
+        gameMode = choice.nextInt();
+        while (gameMode != 0 && gameMode != 1) {
+            System.out.println("Invalid value! Choose your game mode: QuickStart (0) or a StrategicStart (1)");
+            gameMode = choice.nextInt();
+        }
+
+        result += gameMode * 10;
+
+        if (result / 100 == 1) {
+            System.out.println("Captain do we want an easy game (0) or a hard game (1)");
+            gameMode = choice.nextInt();
+            while (gameMode != 0 && gameMode != 1) {
+                System.out.println("Invalid value! Choose your game mode: QuickStart (0) or a StrategicStart (1)");
+                gameMode = choice.nextInt();
+            }
+            result += gameMode;
+        }
+
+        return result;
     }
 
     //This is a basic function containing the turn actions for each player.
@@ -24,7 +132,6 @@ public class main {
     public static void TakeTurn(Player player, Player opponent, Scanner input) {
         player.combinedBoard();
         player.Attack(opponent, input);
-        //player.opponentBoard.print();
     }
 
     //This function facilitates the game. A do-while loop is used to give each player
@@ -62,4 +169,6 @@ public class main {
 
         } while (player.points < POINTS_FOR_VICTORY || opponent.points < POINTS_FOR_VICTORY);
     }
+
+
 }

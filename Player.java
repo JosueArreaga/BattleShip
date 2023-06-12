@@ -5,6 +5,7 @@
  * It handles the 'pieces' of the board, and how players manipulate them, so to speak.
  */
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Player {
@@ -240,4 +241,41 @@ public class Player {
         }
     }
 
+    /*
+        This method allows for a QuickStart. It places ships in the RandomShipPlacement method.
+     */
+    public void SetBoardRandomly() {
+        RandomShipPlacement(SHIP_SIZE_2);
+        RandomShipPlacement(SHIP_SIZE_3);
+        RandomShipPlacement(SHIP_SIZE_4);
+    }
+
+    /*
+        This method is similar to ShipPlacement with a few differences. Firstly, there is no need for user input, nor a need for
+        coordinate verification. The reason for this, is that the random class automatically produces values within the valid range.
+        It then iterates randomly through the board until all the ships are placed.
+     */
+    public void RandomShipPlacement(int shipSize) {
+        boolean validPlacement = false;
+        Random rnd = new Random();
+        while(validPlacement == false) {
+            int xCoordinate = rnd.nextInt(8) + 1; // this well enter coordinates 100% safe
+            int yCoordinate = rnd.nextInt(8) + 1; // this will enter coordinates 100% safe
+            int position = rnd.nextInt(2); // this produce values 0 - 1. We can use 0 to represent horizontal and 1 to represent vertical
+
+
+            if (position == 0) {
+                if (CheckShipHorizontal(shipSize, xCoordinate, yCoordinate) == true) {
+                    SetShipHorizontal(shipSize, xCoordinate, yCoordinate);
+                    validPlacement = true;
+                }
+            }
+            else {
+                if (CheckShipVertical(shipSize, xCoordinate, yCoordinate) == true) {
+                    SetShipVertical(shipSize, xCoordinate, yCoordinate);
+                    validPlacement = true;
+                }
+            }
+        }
+    }
 }
