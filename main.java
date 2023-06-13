@@ -9,7 +9,24 @@ public class main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         int gameSelected = menuText(input);
-
+        
+        String[] logo;
+        logo = new String[10];
+        logo[0] = "                                     # #  ( )";
+        logo[1] = "                                  ___#_#___|__";
+        logo[2] = "                              _  |____________|  _";
+        logo[3] = "                       _=====| | |            | | |==== _";
+        logo[4] = "                 =====| |.---------------------------. | |====";
+        logo[5] = "   <--------------------'   .  .  .  .  .  .  .  .   '--------------/";
+        logo[6] = "     \\                                                             /";
+        logo[7] = "      \\_______________________________________________WWS_________/";
+        logo[8] = "                                    BOAT-FIGHT                      ";
+        logo[9] = "ASCII artist: Matthew Bace";
+        for(int i = 0; i < 9; i++){
+            System.out.println(logo[i]);
+        }
+        System.out.println("Press enter to start!");
+        String line = input.nextLine();
 
         if(gameSelected == 100){
             Player player1 = new Player();
