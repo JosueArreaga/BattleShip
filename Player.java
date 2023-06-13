@@ -26,13 +26,17 @@ public class Player {
     //their ships on the board. It can call the ship placement function as many times as we desire,
     //allowing for more ships to be placed and extending the length of the game.
     public void SetBoard(Scanner input) {
+        playerBoard.print();
         System.out.println("Begin by selecting a starting coordinate for a ship of size 2.");
+        System.out.println("Ex: bb");
         ShipPlacement(input, SHIP_SIZE_2);
         playerBoard.print();
         System.out.println("Now let's select a starting coordinate for a ship of size 3.");
+        System.out.println("Ex: bbb");
         ShipPlacement(input, SHIP_SIZE_3);
         playerBoard.print();
         System.out.println("And finally, let's set a starting coordinate for a ship of size 4.");
+        System.out.println("Ex: bbbb");
         ShipPlacement(input, SHIP_SIZE_4);
         playerBoard.print();
     }
