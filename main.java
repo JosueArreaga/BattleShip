@@ -9,7 +9,7 @@ public class main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         int gameSelected = menuText(input);
-        
+
         String[] logo;
         logo = new String[10];
         logo[0] = "                                     # #  ( )";
@@ -33,7 +33,7 @@ public class main {
             player1.SetBoardRandomly();
             Player player2 = new Player();
             player2.SetBoardRandomly();
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input, true);
         }
 
         if(gameSelected == 101){
@@ -41,7 +41,7 @@ public class main {
             player1.SetBoardRandomly();
             Player player2 = new Player();
             player2.SetBoardRandomly();
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input,false);
         }
 
         if(gameSelected == 110){
@@ -50,7 +50,7 @@ public class main {
             player1.SetBoard(input);
             Player player2 = new Player();
             player2.SetBoardRandomly();
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input, true);
         }
 
         if(gameSelected == 111){
@@ -60,7 +60,7 @@ public class main {
 
             Player player2 = new Player();
             player2.SetBoardRandomly();
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input, false);
         }
 
         if(gameSelected == 200){
@@ -68,7 +68,7 @@ public class main {
             player1.SetBoardRandomly();
             Player player2 = new Player();
             player2.SetBoardRandomly();
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input, true);
         }
 
         if(gameSelected == 210){
@@ -78,9 +78,8 @@ public class main {
             Player player2 = new Player();
             System.out.println("Player 2, let's position your ships!");
             player2.SetBoard(input);
-            RunGame(player1, player2, input);
+            RunGame(player1, player2, input, true);
         }
-
     }
 
 
@@ -107,7 +106,6 @@ public class main {
             110 = Single-Player, Strategic, Easy
             200 = Multi-Player, QuickStart
             210 = Multi-Player, Strategic
-
      */
     private static int menuText(Scanner choice) {
         System.out.println("Welcome Captain! Choose your game mode: Solo(1) or Multiplayer(2)");
@@ -151,10 +149,15 @@ public class main {
         player.Attack(opponent, input);
     }
 
+    public static void TakeTurnAI(Player player, Player opponent) {
+        //player.combinedBoard();
+        player.RandomAttack(opponent);
+    }
+
     //This function facilitates the game. A do-while loop is used to give each player
     //a turn. At the end of each turn, the function checks to see if the player's point
     //total has hit the necessary amount needed to win the game. If not, the game continues.
-    public static void RunGame(Player player, Player opponent, Scanner input) {
+    public static void RunGame(Player player, Player opponent, Scanner input, boolean isAI) {
         int turnCounter = 1;
         int playerIndicator = 1;
         do {
@@ -170,12 +173,18 @@ public class main {
             else {
                 turnCounter++;
                 playerIndicator++;
-                System.out.println("Player 2, it's your turn!");
-                System.out.print("Turn: " + turnCounter);
-                System.out.print("  Player: " + playerIndicator);
-                System.out.println("  Points:" + opponent.points +"\n");
 
-                TakeTurn(opponent, player, input);
+                if(isAI)
+                    TakeTurnAI(opponent,player);
+                else{
+                    System.out.println("Player 2, it's your turn!");
+                    System.out.print("Turn: " + turnCounter);
+                    System.out.print("  Player: " + playerIndicator);
+                    System.out.println("  Points:" + opponent.points +"\n");
+                    TakeTurn(opponent, player, input);
+                }
+
+
                 turnCounter++;
                 playerIndicator--;
             }

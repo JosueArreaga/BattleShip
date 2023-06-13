@@ -5,6 +5,7 @@
  * It handles the 'pieces' of the board, and how players manipulate them, so to speak.
  */
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,9 +19,15 @@ public class Player {
     public int points;
     Board playerBoard = new Board();
     Board opponentBoard = new Board();
+    ArrayList<Integer> attackCoordinates;
 
     Player() {
         points = 0;
+        attackCoordinates = new ArrayList<>();
+        for(int i = 11; i < 89; i++){
+            if(i%10 != 9)
+                attackCoordinates.add(i);
+        }
     }
     //This function calls the ship placement function to walk the player through the process of placing
     //their ships on the board. It can call the ship placement function as many times as we desire,
@@ -99,17 +106,17 @@ public class Player {
         ycoordinate = CheckCoordinate(input, ycoordinate);
 
         if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
-            System.out.println("You hit something!");
+            System.out.println("You hit something!\n");
             opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
             opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
             points++;
         }
         else if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'x') {
-            System.out.println("You've already hit a ship here.");
+            System.out.println("You've already hit a ship here.\n");
         }
         else {
             opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
-            System.out.println("You missed!");
+            System.out.println("You missed!\n");
         }
 
 
@@ -281,5 +288,29 @@ public class Player {
                 }
             }
         }
+    }
+
+
+    public void RandomAttack(Player opponent) {
+
+        Random rnd = new Random();
+        int randomVal = rnd.nextInt(attackCoordinates.size()); // we pick a random value the size of the board
+        int coordinate = attackCoordinates.get(randomVal);    //  we pick a random target area
+
+        int xcoordinate = coordinate/10;
+        int ycoordinate = coordinate%10;
+
+        if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
+            System.out.println("Your Opponent Hit you!!!\n");
+            opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
+            opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
+            points++;
+        }
+        else {
+            opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
+            System.out.println("Your Opponent missed\n");
+        }
+
+        attackCoordinates.remove(randomVal); // we remove the attacked square to avoid duplicate hits.
     }
 }
