@@ -18,8 +18,8 @@ public class main {
         logo[3] = "                       _=====| | |            | | |==== _";
         logo[4] = "                 =====| |.---------------------------. | |====";
         logo[5] = "   <--------------------'   .  .  .  .  .  .  .  .   '--------------/";
-        logo[6] = "     \\                                                             /";
-        logo[7] = "      \\_______________________________________________WWS_________/";
+        logo[6] = "     \\                                                            /";
+        logo[7] = "      \\__________________________________________________________/";
         logo[8] = "                                    BOAT-FIGHT                      ";
         logo[9] = "ASCII artist: Matthew Bace";
         for(int i = 0; i < 9; i++){
@@ -149,10 +149,17 @@ public class main {
         player.Attack(opponent, input);
     }
 
-    public static void TakeTurnAI(Player player, Player opponent) {
+    public static void TakeTurnAI(AI computerPlayer, Player opponent) {
         //player.combinedBoard();
-        player.RandomAttack(opponent);
+        computerPlayer.attack(opponent);
     }
+
+    //public static void TakeTurnSmartAI(Player player, Player opponent){
+    //int[] prevHit;
+    //if (prevHit.length == 0) {
+    //int shot = player.RandomAttack(opponent);
+    //}
+    //}
 
     //This function facilitates the game. A do-while loop is used to give each player
     //a turn. At the end of each turn, the function checks to see if the player's point
@@ -174,8 +181,8 @@ public class main {
                 turnCounter++;
                 playerIndicator++;
 
-                if(isAI)
-                    TakeTurnAI(opponent,player);
+                if(isAI);
+                    //TakeTurnAI(new,player);
                 else{
                     System.out.println("Player 2, it's your turn!");
                     System.out.print("Turn: " + turnCounter);
@@ -196,5 +203,63 @@ public class main {
         } while (player.points < POINTS_FOR_VICTORY || opponent.points < POINTS_FOR_VICTORY);
     }
 
+    public static void RunMultiplayer(Player player, Player opponent, Scanner input) {
+        int turnCounter = 1;
+        int playerIndicator = 1;
+        while (player.points < POINTS_FOR_VICTORY || opponent.points < POINTS_FOR_VICTORY){
+            System.out.println("Player 1, it's your turn!");
+            System.out.print("Turn: " + turnCounter);
+            System.out.print("  Player: " + playerIndicator);
+            System.out.println("  Points:" + player.points + "\n");
+            TakeTurn(player, opponent, input);
+            if (player.points >= Player.POINTS_FOR_VICTORY) {
+                System.out.println("Player" + " 1 " + "Wins!");
+                System.exit(0);
+            }
+            else {
+                turnCounter++;
+                playerIndicator++;
+                System.out.println("Player 2, it's your turn!");
+                System.out.print("Turn: " + turnCounter);
+                System.out.print("  Player: " + playerIndicator);
+                System.out.println("  Points:" + opponent.points +"\n");
+                TakeTurn(opponent, player, input);
+                }
+                turnCounter++;
+                playerIndicator--;
+            }
+            if (opponent.points >= Player.POINTS_FOR_VICTORY) {
+                System.out.println("Player" + " 2 " + "Wins!");
+                System.exit(0);
+            }
+        }
+
+    public static void RunAI(Player player, AI opponent, Scanner input) {
+        int turnCounter = 1;
+        int playerIndicator = 1;
+        while (player.points < POINTS_FOR_VICTORY || opponent.points < POINTS_FOR_VICTORY){
+            System.out.println("Player 1, it's your turn!");
+            System.out.print("Turn: " + turnCounter);
+            System.out.print("  Player: " + playerIndicator);
+            System.out.println("  Points:" + player.points + "\n");
+            TakeTurn(player, opponent, input);
+            if (player.points >= Player.POINTS_FOR_VICTORY) {
+                System.out.println("Player" + " 1 " + "Wins!");
+                System.exit(0);
+            }
+            else {
+                turnCounter++;
+                playerIndicator++;
+                TakeTurnAI(opponent,player);
+            }
+            turnCounter++;
+            playerIndicator--;
+        }
+        if (opponent.points >= Player.POINTS_FOR_VICTORY) {
+            System.out.println("CPU " + "Wins!");
+            System.exit(0);
+        }
+
+    }
 
 }
