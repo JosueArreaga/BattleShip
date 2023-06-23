@@ -1,4 +1,3 @@
-package boatFight;
 import java.util.Scanner;
 
 public class main {
