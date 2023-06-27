@@ -5,24 +5,30 @@
  * It handles the 'pieces' of the board, and how players manipulate them, so to speak.
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Player {
-    private static int SHIP_SIZE_2 = 2;
-    private static int SHIP_SIZE_3 = 3;
-    private static int SHIP_SIZE_4 = 4;
+    protected static int SHIP_SIZE_2 = 2;
+    protected static int SHIP_SIZE_3 = 3;
+    protected static int SHIP_SIZE_4 = 4;
     public static int POINTS_FOR_VICTORY = SHIP_SIZE_2 + SHIP_SIZE_3 + SHIP_SIZE_4;
 
 
     public int points;
-    public int[][] boats;
     Board playerBoard = new Board();
     Board opponentBoard = new Board();
+    ArrayList<Integer> attackCoordinates;
 
     Player() {
         points = 0;
+        attackCoordinates = new ArrayList<>();
+        for(int i = 11; i < 89; i++){
+            if(i%10 != 9)
+                attackCoordinates.add(i);
+        }
     }
-
     //This function calls the ship placement function to walk the player through the process of placing
     //their ships on the board. It can call the ship placement function as many times as we desire,
     //allowing for more ships to be placed and extending the length of the game.
@@ -55,7 +61,7 @@ public class Player {
         int xcoordinate = 0;
         int ycoordinate = 0;
         boolean validPlacement = false;
-        while (validPlacement == false) {
+        while(validPlacement == false) {
             System.out.println("Please enter an x-coordinate from 1-8.");
             xcoordinate = CheckCoordinate(input, xcoordinate);
             System.out.println("Please enter a y-coordinate from 1-8.");
@@ -64,15 +70,18 @@ public class Player {
                 if (CheckShipHorizontal(shipSize, xcoordinate, ycoordinate) == true) {
                     SetShipHorizontal(shipSize, xcoordinate, ycoordinate);
                     validPlacement = true;
-                } else {
+                }
+                else {
                     System.out.println("Ship placement invalid! Try again.");
                 }
 
-            } else {
+            }
+            else {
                 if (CheckShipVertical(shipSize, xcoordinate, ycoordinate) == true) {
                     SetShipVertical(shipSize, xcoordinate, ycoordinate);
                     validPlacement = true;
-                } else {
+                }
+                else {
                     System.out.println("Ship placement invalid! Try again.");
                 }
 
@@ -96,32 +105,21 @@ public class Player {
         System.out.println("Select a y-coordinate for attack:");
         ycoordinate = CheckCoordinate(input, ycoordinate);
 
-        char shot = firing(opponent, (xcoordinate*10 + ycoordinate));
-
-        if (shot == 'b') {
+        if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
             System.out.println("You hit something!\n");
-        } else if (shot == 'x' || shot == 'o') {
-            System.out.println("You've already shot at this coordinate!\n");
-        } else {
+            opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
+            opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
+            points++;
+        }
+        else if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'x') {
+            System.out.println("You've already hit a ship here.\n");
+        }
+        else {
+            opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
             System.out.println("You missed!\n");
         }
 
 
-    }
-
-    public char firing(Player opponent, int coordinate) {
-        int x = coordinate / 10;
-        int y = coordinate % 10;
-        char shot = opponent.playerBoard.getChar(y, x);
-
-        if (shot == 'b') {
-            opponent.playerBoard.setChar(y, x, 'x');
-            opponentBoard.setChar(y, x, 'x');
-            points++;
-        } else {
-            opponentBoard.setChar(y, x, 'o');
-        }
-        return shot;
     }
 
     //This function validates that a given input for coordinates is within the range
@@ -134,12 +132,13 @@ public class Player {
             input.next();
 
         }
-        while (input.hasNextInt()) {
+        while(input.hasNextInt()) {
             coordinate = input.nextInt();
             if (coordinate < 1 || coordinate > 8) {
                 System.out.println("Not a valid coordinate!");
                 System.out.println("Select a number from 1-8");
-            } else
+            }
+            else
                 break;
         }
         return coordinate;
@@ -155,7 +154,6 @@ public class Player {
             xcoordinate++;
         }
     }
-
     /*This function lays the ship onto the board vertically.
      * It increments the y-coordinate until the number of spaces equal
      * to the shipSize parameter have been filled with a ship.
@@ -178,10 +176,12 @@ public class Player {
         while (i <= shipSize) {
             if (xcoordinate > 8) {
                 return false;
-            } else if (playerBoard.getChar(ycoordinate, xcoordinate) != '~') {
+            }
+            else if (playerBoard.getChar(ycoordinate, xcoordinate) != '~') {
                 System.out.println("A ship is already in placed here!");
                 return false;
-            } else {
+            }
+            else {
                 xcoordinate++;
                 i++;
             }
@@ -201,10 +201,12 @@ public class Player {
         while (i <= shipSize) {
             if (ycoordinate > 8) {
                 return false;
-            } else if (playerBoard.getChar(ycoordinate, xcoordinate) != '~') {
+            }
+            else if (playerBoard.getChar(ycoordinate, xcoordinate) != '~') {
                 System.out.println("A ship is already in placed here!");
                 return false;
-            } else {
+            }
+            else {
                 ycoordinate++;
                 i++;
             }
@@ -221,12 +223,13 @@ public class Player {
      */
     public boolean AskShipOrientation(Scanner input) {
         System.out.println("Would you like to place your ship vertically or horizontally? Enter v or h ");
-        while (input.hasNext()) {
+        while(input.hasNext()) {
             char keyPress = input.next().charAt(0);
             System.out.println(keyPress);
             if (keyPress != 'h' && keyPress != 'v') {
                 System.out.println("Please enter v for vertical placement, or h for horizontal placement.");
-            } else if (keyPress == 'h')
+            }
+            else if (keyPress == 'h')
                 return true;
             else if (keyPress == 'v')
                 return false;
@@ -238,16 +241,18 @@ public class Player {
         This method receives the rows of the board as a string after being appended with a "/" after each row.
         We can then utilize .split("/") to create string arrays of the board rows.
      */
-    public void combinedBoard() {
+    public void combinedBoard(){
         StringBuilder sb = new StringBuilder();
-        String[] p1 = playerBoard.getBoardRows().split("/");
-        String[] p2 = opponentBoard.getBoardRows().split("/");
+        String [] p1 = playerBoard.getBoardRows().split("/");
+        String [] p2 = opponentBoard.getBoardRows().split("/");
 
-        for (int i = 0; i < p1.length; i++) {
+        for(int i = 0; i < p1.length; i++){
             sb.setLength(0);
             System.out.println(sb.append(p1[i]).append("            ").append(p2[i]));
         }
     }
+
+
 
     /*
         This method allows for a QuickStart. It places ships in the RandomShipPlacement method.
@@ -266,8 +271,8 @@ public class Player {
     public void RandomShipPlacement(int shipSize) {
         boolean validPlacement = false;
         Random rnd = new Random();
-        while (validPlacement == false) {
-            int xCoordinate = rnd.nextInt(8) + 1; // this will enter coordinates 100% safe
+        while(validPlacement == false) {
+            int xCoordinate = rnd.nextInt(8) + 1; // this well enter coordinates 100% safe
             int yCoordinate = rnd.nextInt(8) + 1; // this will enter coordinates 100% safe
             int position = rnd.nextInt(2); // this produce values 0 - 1. We can use 0 to represent horizontal and 1 to represent vertical
 
@@ -277,7 +282,8 @@ public class Player {
                     SetShipHorizontal(shipSize, xCoordinate, yCoordinate);
                     validPlacement = true;
                 }
-            } else {
+            }
+            else {
                 if (CheckShipVertical(shipSize, xCoordinate, yCoordinate) == true) {
                     SetShipVertical(shipSize, xCoordinate, yCoordinate);
                     validPlacement = true;
