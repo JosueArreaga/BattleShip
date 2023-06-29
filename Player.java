@@ -17,6 +17,11 @@ public class Player {
 
 
     public int points;
+    public int ship1;
+    public int ship2;
+    public int ship3;
+    public int pointsForVictory;
+    
     Board playerBoard = new Board();
     Board opponentBoard = new Board();
     ArrayList<Integer> attackCoordinates;
@@ -24,27 +29,56 @@ public class Player {
     Player() {
         points = 0;
         attackCoordinates = new ArrayList<>();
-        for(int i = 11; i < 89; i++){
-            if(i%10 != 9)
+        for (int i = 11; i < 89; i++) {
+            if (i % 10 != 9 && i%10 != 0)
                 attackCoordinates.add(i);
         }
     }
+    
+    public void DeclareShipLengths(Scanner input) {
+    	System.out.println("How long would you like your first ship to be? Choose a number between 1-6");
+    	ship1 = CheckShipLength(input, ship1);
+    	System.out.println("How long would you like your second ship to be? Choose a number between 1-6");
+    	ship2 = CheckShipLength(input, ship2);
+    	System.out.println("How long would you like your third ship to be? Choose a number between 1-6");
+    	ship3 = CheckShipLength(input, ship3);
+    	pointsForVictory = ship1 + ship2 + ship3;
+    }
+    
+    public int CheckShipLength(Scanner input, int length) {
+        while (!input.hasNextInt()) {
+            System.out.println("Not a valid length!");
+            System.out.println("Select a number from 1-6");
+            input.next();
+
+        }
+        while(input.hasNextInt()) {
+           length = input.nextInt();
+            if (length < 1 || length > 6) {
+                System.out.println("Not a valid length!");
+                System.out.println("Select a number from 1-6");
+            }
+            else
+                break;
+        }
+        return length;
+    }
+    
+    
     //This function calls the ship placement function to walk the player through the process of placing
     //their ships on the board. It can call the ship placement function as many times as we desire,
     //allowing for more ships to be placed and extending the length of the game.
     public void SetBoard(Scanner input) {
         playerBoard.print();
-        System.out.println("Begin by selecting a starting coordinate for a ship of size 2.");
-        System.out.println("Ex: bb");
-        ShipPlacement(input, SHIP_SIZE_2);
+        DeclareShipLengths(input);
+        System.out.println("Begin by selecting a starting coordinate for your first ship.");
+        ShipPlacement(input, ship1);
         playerBoard.print();
-        System.out.println("Now let's select a starting coordinate for a ship of size 3.");
-        System.out.println("Ex: bbb");
-        ShipPlacement(input, SHIP_SIZE_3);
+        System.out.println("Now let's select a starting coordinate for your second ship.");
+        ShipPlacement(input, ship2);
         playerBoard.print();
-        System.out.println("And finally, let's set a starting coordinate for a ship of size 4.");
-        System.out.println("Ex: bbbb");
-        ShipPlacement(input, SHIP_SIZE_4);
+        System.out.println("And finally, let's set a starting coordinate for your third ship.");
+        ShipPlacement(input, ship3);
         playerBoard.print();
     }
 
@@ -261,6 +295,7 @@ public class Player {
         RandomShipPlacement(SHIP_SIZE_2);
         RandomShipPlacement(SHIP_SIZE_3);
         RandomShipPlacement(SHIP_SIZE_4);
+        pointsForVictory = SHIP_SIZE_2 + SHIP_SIZE_3 + SHIP_SIZE_4;
     }
 
     /*
