@@ -15,7 +15,7 @@ public class RunGame {
             System.out.print("  Player: " + playerIndicator);
             System.out.println("  Points:" + player.points + "\n");
             TakeTurn(player, opponent, input);
-            if (player.points >= Player.POINTS_FOR_VICTORY) {
+            if (player.points >= opponent.pointsForVictory) {
                 System.out.println("Player" + " 1 " + "Wins!");
                 System.exit(0);
             }
@@ -37,12 +37,12 @@ public class RunGame {
                 turnCounter++;
                 playerIndicator--;
             }
-            if (opponent.points >= Player.POINTS_FOR_VICTORY) {
+            if (opponent.points >= player.pointsForVictory) {
                 System.out.println("Player" + " 2 " + "Wins!");
                 System.exit(0);
             }
 
-        } while (player.points < Player.POINTS_FOR_VICTORY || opponent.points < Player.POINTS_FOR_VICTORY);
+        } while (player.points < opponent.pointsForVictory || opponent.points < player.pointsForVictory);
     }
 
 
@@ -55,7 +55,7 @@ public class RunGame {
             System.out.print("  Player: " + playerIndicator);
             System.out.println("  Points:" + player.points + "\n");
             TakeTurn(player, opponent, input);
-            if (player.points >= Player.POINTS_FOR_VICTORY) {
+            if (player.points >= opponent.pointsForVictory) {
                 System.out.println("Player" + " 1 " + "Wins!");
                 System.exit(0);
             }
@@ -72,12 +72,12 @@ public class RunGame {
                 turnCounter++;
                 playerIndicator--;
             }
-            if (opponent.points >= Player.POINTS_FOR_VICTORY) {
+            if (opponent.points >= player.pointsForVictory) {
                 System.out.println("Player" + " 2 " + "Wins!");
                 System.exit(0);
             }
 
-        } while (player.points < Player.POINTS_FOR_VICTORY || opponent.points < Player.POINTS_FOR_VICTORY);
+        } while (player.points < opponent.pointsForVictory || opponent.points < player.pointsForVictory);
     }
 
     /*
@@ -135,7 +135,7 @@ public class RunGame {
     }
 
     public static void TakeTurnAI(AI computerPlayer, Player opponent) {
-        computerPlayer.RandomAttack(opponent);
+        computerPlayer.HardModeAttack(opponent);
     }
 
     public void displayLogo() {
