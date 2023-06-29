@@ -10,6 +10,7 @@ public class AI extends Player{
         RandomShipPlacement(SHIP_SIZE_2);
         RandomShipPlacement(SHIP_SIZE_3);
         RandomShipPlacement(SHIP_SIZE_4);
+        pointsForVictory = SHIP_SIZE_2 + SHIP_SIZE_3 + SHIP_SIZE_4;
     }
 
     /*
