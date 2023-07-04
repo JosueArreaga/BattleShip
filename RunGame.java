@@ -1,4 +1,3 @@
-package softwareEngineeringProject;
 import java.util.Scanner;
 
 public class RunGame {
