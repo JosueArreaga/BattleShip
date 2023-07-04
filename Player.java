@@ -1,5 +1,3 @@
-package softwareEngineeringProject;
-
 /*
  * This class contains all the functions pertaining to the player of the game.
  * Within it, there are functions to set-up the player's board, attack their
