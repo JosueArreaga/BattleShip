@@ -1,3 +1,4 @@
+package softwareEngineeringProject;
 import java.util.Scanner;
 
 public class RunGame {
@@ -17,6 +18,7 @@ public class RunGame {
             TakeTurn(player, opponent, input);
             if (player.points >= opponent.pointsForVictory) {
                 System.out.println("Player" + " 1 " + "Wins!");
+                DisplayFireworks();
                 System.exit(0);
             }
             else {
@@ -57,6 +59,7 @@ public class RunGame {
             TakeTurn(player, opponent, input);
             if (player.points >= opponent.pointsForVictory) {
                 System.out.println("Player" + " 1 " + "Wins!");
+                DisplayFireworks();
                 System.exit(0);
             }
             else {
@@ -74,6 +77,7 @@ public class RunGame {
             }
             if (opponent.points >= player.pointsForVictory) {
                 System.out.println("Player" + " 2 " + "Wins!");
+                DisplayFireworks();
                 System.exit(0);
             }
 
@@ -131,7 +135,24 @@ public class RunGame {
     //and 2nd parameters behaves like swapping turns would.
     public static void TakeTurn(Player player, Player opponent, Scanner input) {
         player.combinedBoard();
-        player.Attack(opponent, input);
+        if (player.superAttackActive == true) {
+        	System.out.println("Do you want to use a super Attack (y for Yes, n for No) (1) left");           
+
+        	while(!input.hasNext("[yn]")) {
+            	System.out.println("Please enter y for yes, or n for no.");
+            	input.next();
+            }
+            
+        	char keyPress = input.next().charAt(0);
+            
+        	if(keyPress == 'y'){
+            	player.SuperAttack(opponent, input);
+            }
+            else
+            	player.Attack(opponent, input);
+        }
+        else
+        	player.Attack(opponent, input);
     }
 
     public static void TakeTurnAI(AI computerPlayer, Player opponent) {
@@ -155,6 +176,23 @@ public class RunGame {
             System.out.println(logo[i]);
         }
     }
+    
+    public static void DisplayFireworks() {
+   	 System.out.println(
+                "                                 .''.\n" +
+                        "       .''.             *''*    :_\\/_:     .\n" +
+                        "      :_\\/_:   .    .:.*_\\/_*   : /\\ :  .'.:.'.\n" +
+                        "  .''.: /\\ : _\\(/_  ':'* /\\ *  : '..'.  -=:o:=-\n" +
+                        " :_\\/_:'.:::. /)\\*''*  .|.* '.\\'/.'_\\(/_'.':'.'\n" +
+                        " : /\\ : :::::  '*_\\/_* | |  -= o =- /)\\    '  *\n" +
+                        "  '..'  ':::'   * /\\ * |'|  .'/.\\'.  '._____\n" +
+                        "      *        __*..* |  |     :      |.   |' .---\"|\n" +
+                        "       _*   .-'   '-. |  |     .--'|  ||   | _|    |\n" +
+                        "    .-'|  _.|  |    ||   '-__  |   |  |    ||      |\n" +
+                        "    |' | |.    |    ||       | |   |  |    ||      |\n" +
+                        " ___|  '-'     '    \"\"       '-'   '-.'    '`      |____\n" +
+                        "jgs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+   }
 
     public void gameSelect(Scanner input) {
         int gameSelected = selectMode(input);

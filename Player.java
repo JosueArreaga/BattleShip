@@ -1,3 +1,5 @@
+package softwareEngineeringProject;
+
 /*
  * This class contains all the functions pertaining to the player of the game.
  * Within it, there are functions to set-up the player's board, attack their
@@ -21,6 +23,7 @@ public class Player {
     public int ship2;
     public int ship3;
     public int pointsForVictory;
+    public boolean superAttackActive = true;
     
     Board playerBoard = new Board();
     Board opponentBoard = new Board();
@@ -46,22 +49,31 @@ public class Player {
     }
     
     public int CheckShipLength(Scanner input, int length) {
-        while (!input.hasNextInt()) {
-            System.out.println("Not a valid length!");
-            System.out.println("Select a number from 1-6");
-            input.next();
-
-        }
-        while(input.hasNextInt()) {
-           length = input.nextInt();
-            if (length < 1 || length > 6) {
-                System.out.println("Not a valid length!");
-                System.out.println("Select a number from 1-6");
-            }
-            else
-                break;
-        }
-        return length;
+    	do {
+    		System.out.println("Enter a number from 1-6.");
+    		while(!input.hasNextInt()) {
+    			System.out.println("Not a valid length! Please enter a number from 1-6.");
+    			input.next();
+    		}
+    		length = input.nextInt();
+    	} while (length < 1 || length > 6);
+    	/*boolean done = false;
+    	while(!done) {
+    		try {
+    			length = input.nextInt();
+    			if (length > 0 && length < 7) {
+    				done = true;
+    			}
+    			else {
+    				System.out.println("Not a valid length! Please enter a number from 1-6.");
+    			}
+    		}
+    		catch (Exception outOfBounds) {
+    			System.out.println("Not a valid length! Please enter a number from 1-6.");
+    			input.nextLine();
+    		}
+    	}*/
+    	return length;
     }
     
     
@@ -134,19 +146,21 @@ public class Player {
         //opponentBoard.print();
         int xcoordinate = 0;
         int ycoordinate = 0;
-        System.out.println("Select an x-coordinate for attack:");
-        xcoordinate = CheckCoordinate(input, xcoordinate);
-        System.out.println("Select a y-coordinate for attack:");
-        ycoordinate = CheckCoordinate(input, ycoordinate);
+        do {
+    		System.out.println("Choose a new location to attack.");
+    		System.out.print("Select an x-coordinate! ");
+    		xcoordinate = CheckCoordinate(input, xcoordinate);
+    		System.out.print("Select a y-coordinate! ");
+    		ycoordinate = CheckCoordinate(input, ycoordinate);
+    		if (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o')
+    			System.out.println("You've already attacked this location!");
+    	} while (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o');
 
         if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
             System.out.println("You hit something!\n");
             opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
             opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
             points++;
-        }
-        else if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'x') {
-            System.out.println("You've already hit a ship here.\n");
         }
         else {
             opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
@@ -155,27 +169,58 @@ public class Player {
 
 
     }
+    
+    public void SuperAttack(Player opponent, Scanner input) {
+    	int ycoordinate = 0;
+    	int xcoordinate = 0;
+    	superAttackActive = false;
+    	System.out.println("Select row to obliterate: ");
+        ycoordinate = CheckCoordinate(input, ycoordinate);
+        for(int i = 1; i < 9; i++){
+            xcoordinate = i;
+            if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
+                System.out.println("You hit something!\n");
+                opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
+                opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
+                points++;
+            }
+            else {
+                opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
+                //System.out.println("You missed!\n");
+            }
+        }
+   }
 
     //This function validates that a given input for coordinates is within the range
     //of acceptable values, those being the numbers 1 thru 8. If the input is invalid,
     //the user is prompted to re-enter a valid value.
     public int CheckCoordinate(Scanner input, int coordinate) {
-        while (!input.hasNextInt()) {
-            System.out.println("Not a valid coordinate!");
-            System.out.println("Select a number from 1-8");
-            input.next();
-
-        }
-        while(input.hasNextInt()) {
-            coordinate = input.nextInt();
-            if (coordinate < 1 || coordinate > 8) {
-                System.out.println("Not a valid coordinate!");
-                System.out.println("Select a number from 1-8");
-            }
-            else
-                break;
-        }
-        return coordinate;
+    	do {
+    		System.out.println("Enter a number from 1-8.");
+    		while(!input.hasNextInt()) {
+    			System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
+    			input.next();
+    		}
+    		coordinate = input.nextInt();
+    	} while (coordinate < 1 || coordinate > 8);
+    	
+    	/*boolean done = false;
+    	while(!done) {
+    		try {
+    			coordinate = input.nextInt();
+    			if (coordinate > 0 && coordinate < 9) {
+    				done = true;
+    			}
+    			else {
+    				System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
+    			}
+    		}
+    		catch (Exception outOfBounds) {
+    			System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
+    			input.nextLine();
+    		}
+    	}*/
+    	return coordinate;
     }
 
     /*This function lays the ship onto the board horizontally.
@@ -257,18 +302,15 @@ public class Player {
      */
     public boolean AskShipOrientation(Scanner input) {
         System.out.println("Would you like to place your ship vertically or horizontally? Enter v or h ");
-        while(input.hasNext()) {
-            char keyPress = input.next().charAt(0);
-            System.out.println(keyPress);
-            if (keyPress != 'h' && keyPress != 'v') {
-                System.out.println("Please enter v for vertical placement, or h for horizontal placement.");
-            }
-            else if (keyPress == 'h')
-                return true;
-            else if (keyPress == 'v')
-                return false;
+        while(!input.hasNext("[vh]")) {
+        	System.out.println("Please enter v for vertical placement, or h for horizontal placement.");
+        	input.next();
         }
-        return true;
+        char keyPress = input.next().charAt(0);
+        if (keyPress == 'h')
+        	return true;
+        else
+        	return false;
     }
 
     /*
