@@ -6,17 +6,15 @@ public class RunGame {
     //a turn. At the end of each turn, the function checks to see if the player's point
     //total has hit the necessary amount needed to win the game. If not, the game continues.
 
-    public static void runSolo (Player player, AI opponent, Scanner input, boolean isAI) {
+    public static void runSolo (Player player, AI computerPlayer, Scanner input) {
         int turnCounter = 1;
         int playerIndicator = 1;
         do {
-            System.out.println("Player 1, it's your turn!");
             System.out.print("Turn: " + turnCounter);
-            System.out.print("  Player: " + playerIndicator);
-            System.out.println("  Points:" + player.points + "\n");
-            TakeTurn(player, opponent, input);
-            if (player.points >= opponent.pointsForVictory) {
-                System.out.println("Player" + " 1 " + "Wins!");
+            System.out.print(" Humanity's turn to fight back!\n");
+            TakeTurn(player, computerPlayer, input);
+            if (computerPlayer.boats.size() <= 0) {
+                System.out.println("You've defeated the AI menace! ChatPTG is no more!");
                 DisplayFireworks();
                 System.exit(0);
             }
@@ -24,26 +22,18 @@ public class RunGame {
                 turnCounter++;
                 playerIndicator++;
 
-                if(isAI)
-                    TakeTurnAI(opponent,player);
-                else{
-                    System.out.println("Player 2, it's your turn!");
-                    System.out.print("Turn: " + turnCounter);
-                    System.out.print("  Player: " + playerIndicator);
-                    System.out.println("  Points:" + opponent.points +"\n");
-                    TakeTurn(opponent, player, input);
-                }
-
+                computerPlayer.AIatkManager(player);
 
                 turnCounter++;
                 playerIndicator--;
             }
-            if (opponent.points >= player.pointsForVictory) {
-                System.out.println("Player" + " 2 " + "Wins!");
+            if (player.boats.size() <= 0) {
+                System.out.println("AI has taken over! You lost!");
+                DisplayAIVictory();
                 System.exit(0);
             }
 
-        } while (player.points < opponent.pointsForVictory || opponent.points < player.pointsForVictory);
+        } while (player.boats.size() > 0 && computerPlayer.boats.size() > 0);
     }
 
 
@@ -53,10 +43,9 @@ public class RunGame {
         do {
             System.out.println("Player 1, it's your turn!");
             System.out.print("Turn: " + turnCounter);
-            System.out.print("  Player: " + playerIndicator);
-            System.out.println("  Points:" + player.points + "\n");
+            System.out.print("  Player: " + playerIndicator +"\n");
             TakeTurn(player, opponent, input);
-            if (player.points >= opponent.pointsForVictory) {
+            if (opponent.boats.size() <= 0) {
                 System.out.println("Player" + " 1 " + "Wins!");
                 DisplayFireworks();
                 System.exit(0);
@@ -67,20 +56,19 @@ public class RunGame {
 
                 System.out.println("Player 2, it's your turn!");
                 System.out.print("Turn: " + turnCounter);
-                System.out.print("  Player: " + playerIndicator);
-                System.out.println("  Points:" + opponent.points +"\n");
+                System.out.print("  Player: " + playerIndicator +"\n");
                 TakeTurn(opponent, player, input);
 
                 turnCounter++;
                 playerIndicator--;
             }
-            if (opponent.points >= player.pointsForVictory) {
+            if (player.boats.size() <= 0) {
                 System.out.println("Player" + " 2 " + "Wins!");
                 DisplayFireworks();
                 System.exit(0);
             }
 
-        } while (player.points < opponent.pointsForVictory || opponent.points < player.pointsForVictory);
+        } while (player.boats.size() > 0 && opponent.boats.size() > 0);
     }
 
     /*
@@ -105,28 +93,42 @@ public class RunGame {
         200 = Multi-Player, QuickStart
         210 = Multi-Player, Strategic
  */
-    public static int selectMode(Scanner choice) {
+    public static void selectMode(Scanner choice) {
+        int difficulty = -1;
+        int gameMode = -1;
+        char placementStyle = 'x';
         System.out.println("Welcome Captain! Choose your game mode: Solo(1) or Multiplayer(2)");
-        int gameMode = choice.nextInt();
-        int result = 0;
 
-        while (gameMode != 1 && gameMode != 2) {
-            System.out.println("Invalid Value Choose your game mode: Solo(1) or Multiplayer(2)");
-            gameMode = choice.nextInt();
+        while(!choice.hasNext("[12]")) {
+            System.out.println("Please enter (1) for Solo, or (2) for Multiplayer.");
+            choice.next();
         }
-        result += gameMode * 100;
 
-
-        System.out.println("Captain do you want to QuickStart (0) or a StrategicStart (1)");
         gameMode = choice.nextInt();
-        while (gameMode != 0 && gameMode != 1) {
-            System.out.println("Invalid value! Choose your game mode: QuickStart (0) or a StrategicStart (1)");
-            gameMode = choice.nextInt();
+
+        System.out.println("Captain do you want to QuickStart (q) or a StrategicStart (s)");
+
+        while(!choice.hasNext("[qs]")){
+            System.out.println("Please enter (q) for QuickStart or (s) for a StrategicStart");
+            choice.next();
         }
 
-        result += gameMode * 10;
+        placementStyle = choice.next().charAt(0);
 
-        return result;
+        if(gameMode == 1){
+            System.out.println("You've chosen to fight the AI menace of ChatPTG, what level of opponent will you face?");
+            System.out.println("Level (0) Easy - Commander R2D2");
+            System.out.println("Level (1) Hard - Commander Hal9000");
+            System.out.println("Level (2) Unfair - Commander SkyNet");
+            while(!choice.hasNext("[012]")){
+                System.out.println("Please enter (0) for Easy, (1) for Hard, (2) for Unfair");
+                choice.next();
+            }
+
+            difficulty = choice.nextInt();
+        }
+
+        GameSelect(choice, gameMode, placementStyle, difficulty);
     }
 
     //This is a basic function containing the turn actions for each player.
@@ -135,28 +137,25 @@ public class RunGame {
     public static void TakeTurn(Player player, Player opponent, Scanner input) {
         player.combinedBoard();
         if (player.superAttackActive == true) {
-        	System.out.println("Do you want to use a super Attack (y for Yes, n for No) (1) left");           
+            System.out.println("Do you want to use a super Attack (y for Yes, n for No) (1) left");
 
-        	while(!input.hasNext("[yn]")) {
-            	System.out.println("Please enter y for yes, or n for no.");
-            	input.next();
+            while(!input.hasNext("[yn]")) {
+                System.out.println("Please enter y for yes, or n for no.");
+                input.next();
             }
-            
-        	char keyPress = input.next().charAt(0);
-            
-        	if(keyPress == 'y'){
-            	player.SuperAttack(opponent, input);
+
+            char keyPress = input.next().charAt(0);
+
+            if(keyPress == 'y'){
+                player.SuperAttack(opponent, input);
             }
             else
-            	player.Attack(opponent, input);
+                player.Attack(opponent, input);
         }
         else
-        	player.Attack(opponent, input);
+            player.Attack(opponent, input);
     }
 
-    public static void TakeTurnAI(AI computerPlayer, Player opponent) {
-        computerPlayer.HardModeAttack(opponent);
-    }
 
     public void displayLogo() {
         String[] logo;
@@ -175,9 +174,9 @@ public class RunGame {
             System.out.println(logo[i]);
         }
     }
-    
+
     public static void DisplayFireworks() {
-   	 System.out.println(
+        System.out.println(
                 "                                 .''.\n" +
                         "       .''.             *''*    :_\\/_:     .\n" +
                         "      :_\\/_:   .    .:.*_\\/_*   : /\\ :  .'.:.'.\n" +
@@ -191,45 +190,41 @@ public class RunGame {
                         "    |' | |.    |    ||       | |   |  |    ||      |\n" +
                         " ___|  '-'     '    \"\"       '-'   '-.'    '`      |____\n" +
                         "jgs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-   }
+    }
 
-    public void gameSelect(Scanner input) {
-        int gameSelected = selectMode(input);
+    public static void DisplayAIVictory() {
+        System.out.println("Put a robot ASCII art here.");
+    }
 
-        if(gameSelected == 100){
+    public static void GameSelect(Scanner input, int gameMode, char placementStyle, int difficulty) {
+
+        if(gameMode == 2){
+            //Multiplayer
             Player player1 = new Player();
-            player1.SetBoardRandomly();
-            AI player2 = new AI();
-            player2.SetBoardRandomly();
-            runSolo(player1, player2, input, true);
-        }
-
-        if(gameSelected == 110){
-            Player player1 = new Player();
-            System.out.println("Player 1, let's position your ships!");
-            player1.SetBoard(input);
-            AI player2 = new AI();
-            player2.SetBoardRandomly();
-            runSolo(player1, player2, input, true);
-        }
-
-
-        if(gameSelected == 200){
-            Player player1 = new Player();
-            player1.SetBoardRandomly();
             Player player2 = new Player();
-            player2.SetBoardRandomly();
+            if(placementStyle == 'q'){
+                player1.SetBoardRandomly();
+                player2.SetBoardRandomly();
+            }else{
+                player1.SetBoard(input);
+                player2.SetBoard(input);
+            }
             runMultiPlayer(player1, player2, input);
-        }
-
-        if(gameSelected == 210){
+        }else if(gameMode == 1){
+            //Solo
             Player player1 = new Player();
-            System.out.println("Player 1, let's position your ships!");
-            player1.SetBoard(input);
-            Player player2 = new Player();
-            System.out.println("Player 2, let's position your ships!");
-            player2.SetBoard(input);
-            runMultiPlayer(player1, player2, input);
+            //Sets AI to selected difficulty
+            AI computerPlayer = new AI(difficulty);
+
+            if(placementStyle == 'q'){
+                player1.SetBoardRandomly();
+                computerPlayer.SetBoardRandomlyAI();
+            }else{
+                player1.SetBoard(input);
+                computerPlayer.RandomSizeBoardSet();
+            }
+            runSolo(player1, computerPlayer, input);
+
         }
     }
 }
