@@ -9,7 +9,7 @@ public class main {
 
         System.out.println("Press enter to start!");
         String line = input.nextLine();
-        game.gameSelect(input);
+        game.selectMode(input);
         input.close();
     }
 
