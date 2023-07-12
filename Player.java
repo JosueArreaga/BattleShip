@@ -5,90 +5,68 @@
  * It handles the 'pieces' of the board, and how players manipulate them, so to speak.
  */
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Player {
-    protected static int SHIP_SIZE_2 = 2;
-    protected static int SHIP_SIZE_3 = 3;
-    protected static int SHIP_SIZE_4 = 4;
-    public static int POINTS_FOR_VICTORY = SHIP_SIZE_2 + SHIP_SIZE_3 + SHIP_SIZE_4;
-
-
-    public int points;
     public int ship1;
     public int ship2;
     public int ship3;
-    public int pointsForVictory;
+    public int ship4;
     public boolean superAttackActive = true;
-    
+
+    ArrayList<Set<Integer>> boats = new ArrayList<Set<Integer>>();
     Board playerBoard = new Board();
     Board opponentBoard = new Board();
-    ArrayList<Integer> attackCoordinates;
 
     Player() {
-        points = 0;
-        attackCoordinates = new ArrayList<>();
-        for (int i = 11; i < 89; i++) {
-            if (i % 10 != 9 && i%10 != 0)
-                attackCoordinates.add(i);
-        }
     }
-    
+
     public void DeclareShipLengths(Scanner input) {
-    	System.out.println("How long would you like your first ship to be? Choose a number between 1-6");
-    	ship1 = CheckShipLength(input, ship1);
-    	System.out.println("How long would you like your second ship to be? Choose a number between 1-6");
-    	ship2 = CheckShipLength(input, ship2);
-    	System.out.println("How long would you like your third ship to be? Choose a number between 1-6");
-    	ship3 = CheckShipLength(input, ship3);
-    	pointsForVictory = ship1 + ship2 + ship3;
+        System.out.println("How long would you like your first ship to be? Choose a number between 1-6");
+        ship1 = CheckShipLength(input, ship1);
+        System.out.println("How long would you like your second ship to be? Choose a number between 1-6");
+        ship2 = CheckShipLength(input, ship2);
+        System.out.println("How long would you like your third ship to be? Choose a number between 1-6");
+        ship3 = CheckShipLength(input, ship3);
+        System.out.println("How long would you like your fourth ship to be? Choose a number between 1-6");
+        ship4 = CheckShipLength(input, ship4);
     }
-    
+
     public int CheckShipLength(Scanner input, int length) {
-    	do {
-    		System.out.println("Enter a number from 1-6.");
-    		while(!input.hasNextInt()) {
-    			System.out.println("Not a valid length! Please enter a number from 1-6.");
-    			input.next();
-    		}
-    		length = input.nextInt();
-    	} while (length < 1 || length > 6);
-    	/*boolean done = false;
-    	while(!done) {
-    		try {
-    			length = input.nextInt();
-    			if (length > 0 && length < 7) {
-    				done = true;
-    			}
-    			else {
-    				System.out.println("Not a valid length! Please enter a number from 1-6.");
-    			}
-    		}
-    		catch (Exception outOfBounds) {
-    			System.out.println("Not a valid length! Please enter a number from 1-6.");
-    			input.nextLine();
-    		}
-    	}*/
-    	return length;
+        do {
+            System.out.println("Enter a number from 1-6.");
+            while(!input.hasNextInt()) {
+                System.out.println("Not a valid length! Please enter a number from 1-6.");
+                input.next();
+            }
+            length = input.nextInt();
+        } while (length < 1 || length > 6);
+
+        return length;
     }
-    
-    
+
+
     //This function calls the ship placement function to walk the player through the process of placing
     //their ships on the board. It can call the ship placement function as many times as we desire,
     //allowing for more ships to be placed and extending the length of the game.
     public void SetBoard(Scanner input) {
         playerBoard.print();
         DeclareShipLengths(input);
+
         System.out.println("Begin by selecting a starting coordinate for your first ship.");
         ShipPlacement(input, ship1);
         playerBoard.print();
+
         System.out.println("Now let's select a starting coordinate for your second ship.");
         ShipPlacement(input, ship2);
         playerBoard.print();
-        System.out.println("And finally, let's set a starting coordinate for your third ship.");
+
+        System.out.println("Select a starting coordinate for your third ship.");
         ShipPlacement(input, ship3);
+        playerBoard.print();
+
+        System.out.println("Finally, let's set a starting coordinate for your fourth ship.");
+        ShipPlacement(input, ship4);
         playerBoard.print();
     }
 
@@ -105,13 +83,13 @@ public class Player {
         int xcoordinate = 0;
         int ycoordinate = 0;
         boolean validPlacement = false;
-        while(validPlacement == false) {
+        while(!validPlacement) {
             System.out.println("Please enter an x-coordinate from 1-8.");
             xcoordinate = CheckCoordinate(input, xcoordinate);
             System.out.println("Please enter a y-coordinate from 1-8.");
             ycoordinate = CheckCoordinate(input, ycoordinate);
-            if (AskShipOrientation(input) == true) {
-                if (CheckShipHorizontal(shipSize, xcoordinate, ycoordinate) == true) {
+            if(AskShipOrientation(input)) {
+                if(CheckShipHorizontal(shipSize, xcoordinate, ycoordinate)) {
                     SetShipHorizontal(shipSize, xcoordinate, ycoordinate);
                     validPlacement = true;
                 }
@@ -121,7 +99,7 @@ public class Player {
 
             }
             else {
-                if (CheckShipVertical(shipSize, xcoordinate, ycoordinate) == true) {
+                if(CheckShipVertical(shipSize, xcoordinate, ycoordinate)) {
                     SetShipVertical(shipSize, xcoordinate, ycoordinate);
                     validPlacement = true;
                 }
@@ -140,85 +118,145 @@ public class Player {
      * In this way, we can keep track of a player's actions without editing or
      * revealing the opponent's actual board in the process. If the player hits a target, they're given a point.
      */
+
+
     public void Attack(Player opponent, Scanner input) {
-        //opponentBoard.print();
+        System.out.println("Debug hax \n");
+        opponent.playerBoard.print();
+        System.out.println("\n");
         int xcoordinate = 0;
         int ycoordinate = 0;
         do {
-    		System.out.println("Choose a new location to attack.");
-    		System.out.print("Select an x-coordinate! ");
-    		xcoordinate = CheckCoordinate(input, xcoordinate);
-    		System.out.print("Select a y-coordinate! ");
-    		ycoordinate = CheckCoordinate(input, ycoordinate);
-    		if (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o')
-    			System.out.println("You've already attacked this location!");
-    	} while (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o');
+            System.out.println("Choose a new location to attack.");
+            System.out.print("Select an x-coordinate! ");
+            xcoordinate = CheckCoordinate(input, xcoordinate);
+            System.out.print("Select a y-coordinate! ");
+            ycoordinate = CheckCoordinate(input, ycoordinate);
+            if (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o')
+                System.out.println("You've already attacked this location!");
+        } while (opponentBoard.getChar(ycoordinate, xcoordinate) == 'x' || opponentBoard.getChar(ycoordinate, xcoordinate) == 'o');
 
-        if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
+        char[] result = firing(opponent, (xcoordinate*10 + ycoordinate));
+
+        if (result[0] == 'b') {
             System.out.println("You hit something!\n");
-            opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
-            opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
-            points++;
-        }
-        else {
-            opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
+            if(result[1] == 't'){
+                System.out.println("You sunk your opponent's fighting boat!");
+            }
+        }else {
             System.out.println("You missed!\n");
         }
 
 
     }
-    
-    public void SuperAttack(Player opponent, Scanner input) {
-    	int ycoordinate = 0;
-    	int xcoordinate = 0;
-    	superAttackActive = false;
-    	System.out.println("Select row to obliterate: ");
-        ycoordinate = CheckCoordinate(input, ycoordinate);
-        for(int i = 1; i < 9; i++){
-            xcoordinate = i;
-            if (opponent.playerBoard.getChar(ycoordinate, xcoordinate) == 'b') {
-                System.out.println("You hit something!\n");
-                opponent.playerBoard.setChar(ycoordinate, xcoordinate, 'x');
-                opponentBoard.setChar(ycoordinate, xcoordinate, 'x');
-                points++;
+
+    public char[] firing(Player opponent, int coordinate) {
+        int x = coordinate / 10;
+        int y = coordinate % 10;
+        char shot = opponent.playerBoard.getChar(y, x);
+        boolean sunk = false;
+
+        if (shot == 'b') {
+            opponent.playerBoard.setChar(y, x, 'x');
+            opponentBoard.setChar(y, x, 'x');
+            for(int i = 0; i < opponent.boats.size(); i++){
+                if(opponent.boats.get(i).contains(coordinate)){
+                    opponent.boats.get(i).remove(coordinate);
+                    if(opponent.boats.get(i).size() == 0) {
+                        System.out.println("You sunk my fighting boat!\n");
+                        sunk = true;
+                        opponent.boats.remove(i);
+                    }
+                }
             }
-            else {
-                opponentBoard.setChar(ycoordinate, xcoordinate, 'o');
-                //System.out.println("You missed!\n");
+        } else if (shot == '~') {
+            opponent.playerBoard.setChar(y, x, 'o');
+            opponentBoard.setChar(y, x, 'o');
+        }
+        if(sunk){
+            return new char[]{shot, 't'};
+        }
+        return new char[]{shot, 'f'};
+    }
+
+    public void SuperAttack(Player opponent, Scanner input) {
+        int ycoordinate = 1;
+        int xcoordinate = 1;
+        int hitTotal = 0;
+        int sinkTotal = 0;
+        char orientation;
+        superAttackActive = false;
+
+        System.out.println("Horizontal or Vertical super shot? h for horizontal, v for vertical.");
+        //take input for h or v
+
+        while(!input.hasNext("[hv]")) {
+            System.out.println("Please enter h for horizontal, or v for vertical.");
+            input.next();
+        }
+
+        orientation = input.next().charAt(0);
+
+        if(orientation == 'h'){
+            System.out.println("Select row to obliterate: ");
+            ycoordinate = CheckCoordinate(input, ycoordinate);
+            while(xcoordinate < 9){
+                char[] results = firing(opponent, xcoordinate*10 + ycoordinate);
+                if(results[0] == 'b') {
+                    hitTotal++;
+                    if(results[1] == 't'){
+                        sinkTotal++;
+                    }
+                }
+                xcoordinate++;
+            }
+        } else if(orientation == 'v'){
+            System.out.println("Select column to obliterate: ");
+            xcoordinate = CheckCoordinate(input, xcoordinate);
+            while(ycoordinate < 9){
+                char[] results = firing(opponent, xcoordinate*10 + ycoordinate);
+                if(results[0] == 'b') {
+                    hitTotal++;
+                    if(results[1] == 't'){
+                        sinkTotal++;
+                    }
+                }
+                ycoordinate++;
             }
         }
-   }
+
+        if(hitTotal > 2){
+            System.out.println("Excellent super shot commander! " + hitTotal + " hits!\n");
+        } else if(hitTotal > 1){
+            System.out.println("You got " + hitTotal + " hits!\n");
+        } else if(hitTotal > 0){
+            System.out.println("You got a hit!\n");
+        } else{
+            System.out.println("No hits!\n");
+        }
+
+        if(sinkTotal > 1){
+            System.out.println("You sunk " + sinkTotal + "boats! That must've hurt!\n");
+        } else if(sinkTotal > 0){
+            System.out.println("Good job sinking an enemy ship!\n");
+        }
+
+    }
 
     //This function validates that a given input for coordinates is within the range
     //of acceptable values, those being the numbers 1 thru 8. If the input is invalid,
     //the user is prompted to re-enter a valid value.
     public int CheckCoordinate(Scanner input, int coordinate) {
-    	do {
-    		System.out.println("Enter a number from 1-8.");
-    		while(!input.hasNextInt()) {
-    			System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
-    			input.next();
-    		}
-    		coordinate = input.nextInt();
-    	} while (coordinate < 1 || coordinate > 8);
-    	
-    	/*boolean done = false;
-    	while(!done) {
-    		try {
-    			coordinate = input.nextInt();
-    			if (coordinate > 0 && coordinate < 9) {
-    				done = true;
-    			}
-    			else {
-    				System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
-    			}
-    		}
-    		catch (Exception outOfBounds) {
-    			System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
-    			input.nextLine();
-    		}
-    	}*/
-    	return coordinate;
+        do {
+            System.out.println("Enter a number from 1-8.");
+            while(!input.hasNextInt()) {
+                System.out.println("Not a valid coordinate! Please enter a number from 1-8.");
+                input.next();
+            }
+            coordinate = input.nextInt();
+        } while (coordinate < 1 || coordinate > 8);
+
+        return coordinate;
     }
 
     /*This function lays the ship onto the board horizontally.
@@ -226,20 +264,28 @@ public class Player {
      * to the shipSize parameter have been filled with a ship.
      */
     public void SetShipHorizontal(int shipSize, int xcoordinate, int ycoordinate) {
-        for (int i = 1; i <= shipSize; i++) {
+        Set<Integer> boat = new HashSet<Integer>();
+        //changed from i =1  and i <= shipSize
+        for (int i = 0; i < shipSize; i++) {
             playerBoard.setChar(ycoordinate, xcoordinate, 'b');
+            boat.add((xcoordinate * 10) + ycoordinate);
             xcoordinate++;
         }
+        boats.add(boat);
     }
+
     /*This function lays the ship onto the board vertically.
      * It increments the y-coordinate until the number of spaces equal
      * to the shipSize parameter have been filled with a ship.
      */
     public void SetShipVertical(int shipSize, int xcoordinate, int ycoordinate) {
+        Set<Integer> boat = new HashSet<Integer> ();
         for (int i = 1; i <= shipSize; i++) {
             playerBoard.setChar(ycoordinate, xcoordinate, 'b');
+            boat.add((xcoordinate * 10) + ycoordinate );
             ycoordinate++;
         }
+        boats.add(boat);
     }
 
     /*
@@ -301,14 +347,14 @@ public class Player {
     public boolean AskShipOrientation(Scanner input) {
         System.out.println("Would you like to place your ship vertically or horizontally? Enter v or h ");
         while(!input.hasNext("[vh]")) {
-        	System.out.println("Please enter v for vertical placement, or h for horizontal placement.");
-        	input.next();
+            System.out.println("Please enter v for vertical placement, or h for horizontal placement.");
+            input.next();
         }
         char keyPress = input.next().charAt(0);
         if (keyPress == 'h')
-        	return true;
+            return true;
         else
-        	return false;
+            return false;
     }
 
     /*
@@ -332,10 +378,10 @@ public class Player {
         This method allows for a QuickStart. It places ships in the RandomShipPlacement method.
      */
     public void SetBoardRandomly() {
-        RandomShipPlacement(SHIP_SIZE_2);
-        RandomShipPlacement(SHIP_SIZE_3);
-        RandomShipPlacement(SHIP_SIZE_4);
-        pointsForVictory = SHIP_SIZE_2 + SHIP_SIZE_3 + SHIP_SIZE_4;
+        RandomShipPlacement(2);
+        RandomShipPlacement(3);
+        RandomShipPlacement(3);
+        RandomShipPlacement(4);
     }
 
     /*
