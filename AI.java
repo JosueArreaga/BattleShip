@@ -101,23 +101,23 @@ public class AI extends Player{
                 prevBoatHit = -1;
                 hitCoordinates.add(newShot);
                 System.out.println(name + " sunk one of your fighting boats!");
-                System.out.println("AI sunk boat direct found");
+                //System.out.println("AI sunk boat direct found");
             } else if(results[0] == 'b'){
                 hitCoordinates.add(newShot);
                 System.out.println(name + " got a hit at " + newShot);
-                System.out.println("AI hit boat direct found");
+                //System.out.println("AI hit boat direct found");
             } else if(results[0] == '~'){
                 //Direction is reverted to 0 if there is a miss going down one direction, that means the rest of the boat is down the opposite direction
                 //from where we initially hit the boat, so we reverse the current direction and set the prevshot to the prevboathit
                 currDirection = -1*currDirection;
                 prevShotCoord = prevBoatHit;
                 missCoordinates.add(newShot);
-                System.out.println("AI miss direct found, reversing direction.");
+                //System.out.println("AI miss direct found, reversing direction.");
             }
         } else{
             //If the newShot is invalid, then look in another direction.
             currDirection = 0;
-            System.out.println("Direct found fail, reverting to direct discovery phase");
+            //System.out.println("Direct found fail, reverting to direct discovery phase");
             DirectionDiscovery(opponent);
         }
     }
@@ -151,18 +151,18 @@ public class AI extends Player{
             currDirection = 0;
             prevBoatHit = -1;
             System.out.println(name + " sunk one of your fighting boats!");
-            System.out.println("AI sunk boat direct discovery");
+            //System.out.println("AI sunk boat direct discovery");
             hitCoordinates.add(newShot);
         } else if(results[0] == 'b'){
             //If it hits a ship but doesn't sink, switch to DirectFound phase.
             currDirection = randomDirection;
             System.out.println(name + " got a hit at " + newShot);
-            System.out.println("AI hit boat direct discovery");
+            //System.out.println("AI hit boat direct discovery");
             hitCoordinates.add(newShot);
         }else{
             //If it misses, keep looking for the direction its facing.
             System.out.println(name + " missed at " + newShot);
-            System.out.println("AI missed direct discovery");
+            //System.out.println("AI missed direct discovery");
             missCoordinates.add(newShot);
         }
     }
@@ -185,12 +185,12 @@ public class AI extends Player{
             }else {
                 System.out.println(name + " got a hit at " + randCoord);
             }
-            System.out.println("Random AI hit: " + randCoord);
+            //System.out.println("Random AI hit: " + randCoord);
             hitCoordinates.add(randCoord);
             prevBoatHit = randCoord;
         }else{
             System.out.println(name + " missed at " + randCoord);
-            System.out.println("Random AI miss: " + randCoord);
+            //System.out.println("Random AI miss: " + randCoord);
             missCoordinates.add(randCoord);
         }
 
