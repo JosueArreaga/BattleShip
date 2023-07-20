@@ -121,8 +121,8 @@ public class Player {
 
 
     public void Attack(Player opponent, Scanner input) {
-        System.out.println("Debug hax \n");
-        opponent.playerBoard.print();
+        //System.out.println("Debug hax \n");
+        //opponent.playerBoard.print();
         System.out.println("\n");
         int xcoordinate = 0;
         int ycoordinate = 0;
